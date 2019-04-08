@@ -147,19 +147,14 @@ ORDER BY speed
 /*Task 17*/
 
 SELECT *
-FROM (SELECT maker, [type], count(model) AS count_m
-FROM product) AS info
-PIVOT (SUM ([count_m])
-FOR [type] IN (pc, laptop, printer) AS pvt_table;
-
-SELECT *
-FROM 
-(SELECT * FROM product)
-AS [source]
+FROM
+(SELECT maker, [type], model
+FROM product)
+AS info
 PIVOT
 (
 	COUNT(model)
 	FOR [type] IN ([pc], [laptop], [printer])
 )
-AS [pivot];
+AS pvt_table;
 
