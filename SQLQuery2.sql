@@ -27,14 +27,18 @@ WHERE NOT speed >500;
 
 /*Task 4*/
 
-SELECT laptop.code, laptop.model, grouped.hd, grouped.ram 
+SELECT MAX(code) as [model_code_max], MIN(code) as [model_code_min], hd, ram FROM
+(
+SELECT laptop.code, model, laptop.hd, laptop.ram 
 FROM laptop
 INNER JOIN
 (SELECT laptop.hd, laptop.ram FROM laptop
 GROUP BY laptop.hd, laptop.ram
 HAVING COUNT(*) = 2) AS grouped
 ON laptop.hd = grouped.hd AND laptop.ram = grouped.ram
-ORDER BY laptop.model DESC, grouped.hd DESC, grouped.ram DESC;
+) as models
+GROUP BY model, hd, ram
+
 
 /*Task 5*/
 
@@ -158,3 +162,69 @@ PIVOT
 )
 AS pvt_table;
 
+/* Task 18 */
+
+SELECT [avg],
+ [11],[12],[14],[15]
+ FROM (SELECT 'average price' AS 'avg', screen, price FROM Laptop) x
+ PIVOT
+ (AVG(price)
+ FOR screen
+ IN([11],[12],[14],[15])
+ ) pvt;
+
+
+/* Task 19 */
+
+
+SELECT laptop.*, result.maker FROM laptop
+CROSS APPLY 
+(SELECT maker FROM product WHERE laptop.model = product.model) AS result
+
+/* Task 20 */
+
+SELECT * 
+FROM laptop AS L1
+CROSS APPLY 
+(SELECT max(price) AS max_price FROM product 
+JOIN laptop ON laptop.model = product.model
+WHERE maker = (SELECT maker FROM product AS P2 WHERE P2.model = L1.model)) x;
+
+/* Task 21 */
+
+SELECT * FROM laptop L1
+CROSS APPLY
+(SELECT TOP 1 * FROM Laptop L2 
+WHERE L1.model < L2.model OR (L1.model = L2.model AND L1.code < L2.code) 
+ORDER BY model, code) X
+ORDER BY L1.model;
+
+/* Task 22 */
+
+SELECT * FROM laptop L1
+OUTER APPLY
+(SELECT TOP 1 * 
+FROM Laptop L2 
+WHERE L1.model < L2.model OR (L1.model = L2.model AND L1.code < L2.code) 
+ORDER BY model, code) X
+ORDER BY L1.model;
+
+/* Task 23 */
+
+SELECT X.* FROM 
+(SELECT DISTINCT [type] FROM product) Pr1 
+CROSS APPLY 
+(SELECT TOP 3 * FROM product Pr2 WHERE  Pr1.type=Pr2.type ORDER BY pr2.model) x;
+
+
+/* Task 24 */
+
+SELECT code, [name], [value] FROM Laptop
+CROSS APPLY
+(VALUES('speed', speed)
+,('ram', ram)
+,('hd', hd)
+,('screen', screen)
+) spec([name], [value])
+WHERE code < 4 
+ORDER BY code, [name], [value];
