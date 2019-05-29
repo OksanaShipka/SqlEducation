@@ -15,7 +15,7 @@ ON g.region_id = f.place_id
 )
 SELECT region_id, place_id, name, PlaceLevel
 FROM first_level_regions
-WHERE PlaceLevel >= 0
+WHERE PlaceLevel >=0
 go
 
 /*Task 5*/
@@ -330,7 +330,7 @@ FROM printer
 WHERE model IN (SELECT model FROM product WHERE [type] = 'printer' AND maker = 'B')
 
 /* Task 30 */
-z
+SELECT [name], class
 FROM ships
 WHERE [name] = class
 

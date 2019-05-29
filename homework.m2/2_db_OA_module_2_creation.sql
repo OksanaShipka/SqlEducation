@@ -1,0 +1,5 @@
+USE master
+GO
+
+CREATE DATABASE OA_module_2
+GO
